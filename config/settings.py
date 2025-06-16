@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_yasg",
     "django_celery_beat",
+    "drf_spectacular",
 
     # Пользовательские
     "users",
@@ -110,7 +111,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
 
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True
@@ -127,3 +130,11 @@ TELEGRAM_CHAT_ID = env("TELEGRAM_CHAT_ID")
 
 CELERY_TASK_ALWAYS_EAGER = False
 CELERY_WORKER_POOL = "solo"
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Habit Tracker API",
+    "DESCRIPTION": "API для управления привычками с Telegram-ботом и Celery",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
