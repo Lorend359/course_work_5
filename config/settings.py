@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     # Пользовательские
     "users",
     "habits",
+    "notifications",
 ]
 
 # Middleware
@@ -122,3 +123,7 @@ CELERY_TIMEZONE = TIME_ZONE
 # Telegram
 TELEGRAM_BOT_TOKEN = env("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = env("TELEGRAM_CHAT_ID")
+
+
+CELERY_TASK_ALWAYS_EAGER = False
+CELERY_WORKER_POOL = "solo"
