@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import Habit
 
 
@@ -26,27 +27,19 @@ class HabitSerializer(serializers.ModelSerializer):
                 )
         else:
             if reward and linked_habit:
-                raise serializers.ValidationError(
-                    "Можно указать либо награду, либо связанную привычку, но не оба."
-                )
+                raise serializers.ValidationError("Можно указать либо награду, либо связанную привычку, но не оба.")
             if not reward and not linked_habit:
                 raise serializers.ValidationError(
                     "Укажите либо награду, либо связанную привычку для полезной привычки."
                 )
 
         if linked_habit and not linked_habit.is_pleasant:
-            raise serializers.ValidationError(
-                "Связанной может быть только приятная привычка."
-            )
+            raise serializers.ValidationError("Связанной может быть только приятная привычка.")
 
         if duration and duration > 120:
-            raise serializers.ValidationError(
-                "Время выполнения не может превышать 120 секунд."
-            )
+            raise serializers.ValidationError("Время выполнения не может превышать 120 секунд.")
 
         if periodicity and periodicity > 7:
-            raise serializers.ValidationError(
-                "Периодичность не может быть реже 1 раза в 7 дней."
-            )
+            raise serializers.ValidationError("Периодичность не может быть реже 1 раза в 7 дней.")
 
         return data

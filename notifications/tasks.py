@@ -3,6 +3,7 @@ from django.conf import settings
 
 TELEGRAM_API = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage"
 
+
 def send_telegram_message(text: str):
     """Отправляет сообщение в Telegram"""
     if not settings.TELEGRAM_BOT_TOKEN or not settings.TELEGRAM_CHAT_ID:

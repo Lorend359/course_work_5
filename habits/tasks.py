@@ -1,10 +1,13 @@
 from celery import shared_task
+
 from notifications.tasks import send_telegram_message
+
 
 @shared_task
 def send_reminders():
-    from .models import Habit
     from django.utils.timezone import now
+
+    from .models import Habit
 
     today = now().date()
     habits = Habit.objects.filter(periodicity=1, is_pleasant=False)

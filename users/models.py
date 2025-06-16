@@ -34,6 +34,7 @@ class CustomUser(AbstractUser):
     """
     Кастомная модель пользователя с email как логином.
     """
+
     username = None
     email = models.EmailField(_("email address"), unique=True)
 

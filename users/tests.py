@@ -1,23 +1,18 @@
-from rest_framework.test import APITestCase
-from rest_framework import status
 from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+
 from users.models import CustomUser
 
 
 class UserTests(APITestCase):
     def setUp(self):
-        self.user_data = {
-            "email": "testuser@example.com",
-            "password": "302010Pass"
-        }
+        self.user_data = {"email": "testuser@example.com", "password": "302010Pass"}
         self.user = CustomUser.objects.create_user(**self.user_data)
 
     def test_register_user(self):
         url = reverse("users:register")
-        data = {
-            "email": "newuser@example.com",
-            "password": "NewPass123!"
-        }
+        data = {"email": "newuser@example.com", "password": "NewPass123!"}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(CustomUser.objects.filter(email="newuser@example.com").exists())
@@ -49,5 +44,3 @@ class UserTests(APITestCase):
 
         updated_user = CustomUser.objects.get(pk=self.user.pk)
         self.assertFalse(updated_user.is_active)
-
-

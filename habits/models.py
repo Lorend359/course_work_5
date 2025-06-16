@@ -1,11 +1,12 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 
 class Habit(models.Model):
     """
     Модель привычки.
     """
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -17,20 +18,15 @@ class Habit(models.Model):
     action = models.CharField(max_length=255, verbose_name="Действие")
     is_pleasant = models.BooleanField(default=False, verbose_name="Приятная привычка")
     linked_habit = models.ForeignKey(
-        'self',
+        "self",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        limit_choices_to={'is_pleasant': True},
+        limit_choices_to={"is_pleasant": True},
         related_name="linked_to",
         verbose_name="Связанная привычка",
     )
-    reward = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        verbose_name="Вознаграждение"
-    )
+    reward = models.CharField(max_length=255, null=True, blank=True, verbose_name="Вознаграждение")
     periodicity = models.PositiveSmallIntegerField(default=1, verbose_name="Периодичность (в днях)")
     duration = models.PositiveSmallIntegerField(verbose_name="Время на выполнение (сек)")
     is_public = models.BooleanField(default=False, verbose_name="Публичная")

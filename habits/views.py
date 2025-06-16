@@ -1,11 +1,12 @@
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Habit
-from .serializers import HabitSerializer
-from .permissions import IsOwnerOrReadOnly
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
+
+from .models import Habit
+from .permissions import IsOwnerOrReadOnly
+from .serializers import HabitSerializer
 
 
 class HabitPagination(PageNumberPagination):
@@ -15,7 +16,7 @@ class HabitPagination(PageNumberPagination):
 @extend_schema(
     summary="Получить список привычек пользователя",
     description="Возвращает список всех привычек, созданных авторизованным пользователем.",
-    responses=HabitSerializer
+    responses=HabitSerializer,
 )
 class HabitListCreateView(generics.ListCreateAPIView):
     serializer_class = HabitSerializer
@@ -29,7 +30,7 @@ class HabitListCreateView(generics.ListCreateAPIView):
         summary="Создать новую привычку",
         description="Позволяет авторизованному пользователю создать новую привычку.",
         request=HabitSerializer,
-        responses={201: HabitSerializer}
+        responses={201: HabitSerializer},
     )
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -37,8 +38,9 @@ class HabitListCreateView(generics.ListCreateAPIView):
 
 @extend_schema(
     summary="Получить, обновить или удалить привычку по ID",
-    description="Позволяет просматривать, редактировать или удалять привычку. Только владелец может изменять или удалять.",
-    responses=HabitSerializer
+    description="Позволяет просматривать, редактировать или удалять привычку."
+                " Только владелец может изменять или удалять.",
+    responses=HabitSerializer,
 )
 class HabitRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Habit.objects.all()
@@ -49,7 +51,7 @@ class HabitRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 @extend_schema(
     summary="Список публичных привычек",
     description="Отображает список привычек, помеченных как публичные.",
-    responses=HabitSerializer
+    responses=HabitSerializer,
 )
 class PublicHabitListView(generics.ListAPIView):
     queryset = Habit.objects.filter(is_public=True)
