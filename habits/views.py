@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Habit
@@ -11,45 +12,57 @@ class HabitPagination(PageNumberPagination):
     page_size = 5
 
 
+@extend_schema(
+    summary="Получить список привычек пользователя",
+    description="Возвращает список всех привычек, созданных авторизованным пользователем.",
+    responses=HabitSerializer
+)
 class HabitListCreateView(generics.ListCreateAPIView):
-    """
-    Список и создание привычек пользователя.
-    """
     serializer_class = HabitSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = HabitPagination
 
     def get_queryset(self):
-        return Habit.objects.filter(user=self.request.user) | Habit.objects.filter(is_public=True)
+        return Habit.objects.filter(user=self.request.user)
 
+    @extend_schema(
+        summary="Создать новую привычку",
+        description="Позволяет авторизованному пользователю создать новую привычку.",
+        request=HabitSerializer,
+        responses={201: HabitSerializer}
+    )
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
+@extend_schema(
+    summary="Получить, обновить или удалить привычку по ID",
+    description="Позволяет просматривать, редактировать или удалять привычку. Только владелец может изменять или удалять.",
+    responses=HabitSerializer
+)
 class HabitRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Просмотр, обновление и удаление привычки.
-    """
     queryset = Habit.objects.all()
     serializer_class = HabitSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
 
+@extend_schema(
+    summary="Список публичных привычек",
+    description="Отображает список привычек, помеченных как публичные.",
+    responses=HabitSerializer
+)
 class PublicHabitListView(generics.ListAPIView):
-    """
-    Список публичных привычек.
-    """
     queryset = Habit.objects.filter(is_public=True)
     serializer_class = HabitSerializer
     permission_classes = [AllowAny]
     pagination_class = HabitPagination
 
 
+@extend_schema(
+    summary="Работа с привычками (ViewSet)",
+    description="Возвращает привычки пользователя и публичные привычки. Используется для CRUD через ViewSet.",
+)
 class HabitViewSet(ModelViewSet):
-    """
-    Просмотр своих и публичных привычек. Управление — только своими.
-    """
-
     serializer_class = HabitSerializer
     permission_classes = [IsAuthenticated]
 
