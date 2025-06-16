@@ -4,6 +4,7 @@ from .models import Habit
 from .serializers import HabitSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.viewsets import ModelViewSet
 
 
 class HabitPagination(PageNumberPagination):
@@ -19,7 +20,7 @@ class HabitListCreateView(generics.ListCreateAPIView):
     pagination_class = HabitPagination
 
     def get_queryset(self):
-        return Habit.objects.filter(user=self.request.user)
+        return Habit.objects.filter(user=self.request.user) | Habit.objects.filter(is_public=True)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -42,3 +43,21 @@ class PublicHabitListView(generics.ListAPIView):
     serializer_class = HabitSerializer
     permission_classes = [AllowAny]
     pagination_class = HabitPagination
+
+
+class HabitViewSet(ModelViewSet):
+    """
+    Просмотр своих и публичных привычек. Управление — только своими.
+    """
+
+    serializer_class = HabitSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if self.action == "list":
+            return Habit.objects.filter(user=user) | Habit.objects.filter(is_public=True)
+        return Habit.objects.filter(user=user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
