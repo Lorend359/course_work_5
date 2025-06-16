@@ -17,4 +17,8 @@ app.conf.beat_schedule = {
         'task': 'habits.tasks.send_reminders',
         'schedule': crontab(minute='*/2'),
     },
+    'deactivate-inactive-users-daily': {
+        'task': 'users.tasks.deactivate_inactive_users',
+        'schedule': crontab(hour=0, minute=0),
+    },
 }
