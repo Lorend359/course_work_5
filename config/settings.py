@@ -7,14 +7,13 @@ env = environ.Env(
     DEBUG=(bool, False)
 )
 
-# 1. Базовая директория
+# Базовая директория
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 2. Загрузка .env
-env = environ.Env(DEBUG=(bool, False))
+# Загрузка переменных окружения
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-# 3. Настройки
+# Основные настройки
 DEBUG = env('DEBUG')
 SECRET_KEY = env('SECRET_KEY')
 ALLOWED_HOSTS = env('ALLOWED_HOSTS').split(',')
@@ -72,7 +71,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# База данных (PostgreSQL)
+# База данных
 DATABASES = {
     "default": env.db(),
 }
@@ -96,18 +95,20 @@ USE_TZ = True
 # Статические файлы
 STATIC_URL = "/static/"
 
+# Настройка пользовательской модели
+AUTH_USER_MODEL = "users.CustomUser"
+
 # Тип поля по умолчанию
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Django REST Framework
+# Django REST Framework + JWT
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ]
 }
 
 # CORS
@@ -121,6 +122,3 @@ CELERY_TIMEZONE = TIME_ZONE
 # Telegram
 TELEGRAM_BOT_TOKEN = env("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = env("TELEGRAM_CHAT_ID")
-
-
-AUTH_USER_MODEL = "users.CustomUser"
